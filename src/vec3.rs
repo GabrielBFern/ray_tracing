@@ -198,3 +198,62 @@ impl Not for Vec3 {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_color() {
+        let rgb = Color::new(100.0, 200.0, 255.0);
+        cmp_float(rgb.r(), 100.0);
+        cmp_float(rgb.g(), 200.0);
+        cmp_float(rgb.b(), 255.0);
+    }
+
+    #[test]
+    fn test_coordinates() {
+        let pos = Point::new(1.0, 2.0, 3.0);
+        cmp_float(pos.x(), 1.0);
+        cmp_float(pos.y(), 2.0);
+        cmp_float(pos.z(), 3.0);
+    }
+
+    #[test]
+    fn test_translate() {
+        let pos1 = Point::new(1.0, 2.0, 3.0);
+        let pos2 = Point::new(1.0, 1.0, 1.0);
+        let expected = Point::new(2.0, 3.0, 4.0);
+
+        cmp_vec3(pos1 + pos2, expected);
+    }
+
+    fn cmp_float(left: f32, right: f32) {
+        if cmp_float_inside(left, right) {
+            panic!(
+                r#"assertion failed: `(left approx_eq right)`
+ left: `{:?}`,
+right: `{:?}`"#,
+                left, right,
+            );
+        }
+    }
+
+    fn cmp_vec3(left: Vec3, right: Vec3) {
+        if cmp_float_inside(left.x(), right.x())
+            || cmp_float_inside(left.y(), right.y())
+            || cmp_float_inside(left.z(), right.z())
+        {
+            panic!(
+                r#"assertion failed: `(left approx_eq right)`
+ left: `{:?}`,
+right: `{:?}`"#,
+                left, right,
+            );
+        }
+    }
+
+    fn cmp_float_inside(left: f32, right: f32) -> bool {
+        (left - right).abs() > f32::EPSILON
+    }
+}
