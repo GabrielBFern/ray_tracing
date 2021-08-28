@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/GabrielBFern/ray_tracing/badge.svg?branch=main)](https://coveralls.io/github/GabrielBFern/ray_tracing?branch=main)
+[![codecov](https://codecov.io/gh/GabrielBFern/ray_tracing/branch/main/graph/badge.svg?token=N2ZHMO72AY)](https://codecov.io/gh/GabrielBFern/ray_tracing)
 
 Ray Tracing in One Weekend - In Rust
 
