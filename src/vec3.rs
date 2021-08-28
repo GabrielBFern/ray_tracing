@@ -51,7 +51,7 @@ impl Vec3 {
         *self / self.length()
     }
 
-    pub fn cross(&self, other: Vec3) -> Vec3 {
+    pub fn cross(&self, other: &Vec3) -> Vec3 {
         Vec3 {
             data: [
                 self.data[1] * other.data[2] - self.data[2] * other.data[1],
@@ -227,32 +227,128 @@ mod tests {
         cmp_vec3(pos1 + pos2, expected);
     }
 
-    fn cmp_float(left: f32, right: f32) {
-        if cmp_float_inside(left, right) {
-            panic!(
-                r#"assertion failed: `(left approx_eq right)`
- left: `{:?}`,
-right: `{:?}`"#,
-                left, right,
-            );
-        }
+    #[test]
+    fn test_mul() {
+        let pos1 = Point::new(3.0, 2.0, 3.0);
+        let pos2 = Point::new(0.5, 3.0, 1.0);
+        let expected = Point::new(1.5, 6.0, 3.0);
+
+        cmp_vec3(pos1 * pos2, expected);
     }
 
-    fn cmp_vec3(left: Vec3, right: Vec3) {
-        if cmp_float_inside(left.x(), right.x())
-            || cmp_float_inside(left.y(), right.y())
-            || cmp_float_inside(left.z(), right.z())
-        {
-            panic!(
-                r#"assertion failed: `(left approx_eq right)`
- left: `{:?}`,
-right: `{:?}`"#,
-                left, right,
-            );
-        }
+    #[test]
+    fn test_div() {
+        let pos1 = Point::new(4.0, 2.0, 12.0);
+        let expected = Point::new(1.0, 0.5, 3.0);
+
+        cmp_vec3(pos1 / 4.0, expected);
     }
 
-    fn cmp_float_inside(left: f32, right: f32) -> bool {
-        (left - right).abs() > f32::EPSILON
+    #[test]
+    fn test_mul_fat() {
+        let pos1 = Point::new(3.0, 1.5, 3.0);
+        let expected = Point::new(9.0, 4.5, 9.0);
+
+        cmp_vec3(pos1 * 3.0, expected);
     }
+
+    #[test]
+    fn test_not() {
+        let pos1 = Point::new(3.0, -1.5, 3.0);
+        let expected = Point::new(-3.0, 1.5, -3.0);
+
+        cmp_vec3(!pos1, expected);
+    }
+
+    #[test]
+    fn test_dot() {
+        let pos1 = Point::new(3.0, -1.5, 3.0);
+        let pos2 = Point::new(0.5, 3.0, 1.0);
+        let expected = 1.5 - 4.5 + 3.0;
+        cmp_float(pos1.dot(&pos2), expected);
+    }
+
+    #[test]
+    fn test_length_squared() {
+        let pos1 = Point::new(3.0, -1.5, 3.0);
+        let expected = 9.0 + 2.25 + 9.0;
+        cmp_float(pos1.length_squared(), expected);
+    }
+
+    #[test]
+    fn test_length() {
+        let pos1 = Point::new(3.0, -1.5, 3.0);
+        let expected = 4.5;
+        cmp_float(pos1.length(), expected);
+    }
+
+    #[test]
+    fn test_length_cross() {
+        let pos1 = Point::new(3.0, 4.0, 2.0);
+        let pos2 = Point::new(1.0, 5.0, 6.0);
+        let expected = Point::new(14.0, -16.0, 11.0);
+        cmp_vec3(pos1.cross(&pos2), expected);
+    }
+
+    #[test]
+    fn test_unit() {
+        let pos1 = Point::new(3.0, 4.0, 2.0);
+        let expected = Point::new(0.557086, 0.74278134, 0.3713906);
+        cmp_vec3(pos1.unit_vector(), expected);
+    }
+
+    #[test]
+    fn test_assigns() {
+        let mut pos1 = Point::new(3.0, 2.0, 4.0);
+        pos1 += Point::new(3.0, 2.0, 4.0);
+        let expected = Point::new(6.0, 4.0, 8.0);
+        cmp_vec3(pos1, expected);
+
+        let mut pos1 = Point::new(3.0, 2.0, 4.0);
+        pos1 -= Point::new(3.0, 2.0, 5.0);
+        let expected = Point::new(0.0, 0.0, -1.0);
+        cmp_vec3(pos1, expected);
+
+        let mut pos1 = Point::new(3.0, 2.0, 4.0);
+        pos1 *= Point::new(3.0, 2.0, 4.0);
+        let expected = Point::new(9.0, 4.0, 16.0);
+        cmp_vec3(pos1, expected);
+
+        let mut pos1 = Point::new(3.0, 2.0, 4.0);
+        pos1 *= 3.0;
+        let expected = Point::new(9.0, 6.0, 12.0);
+        cmp_vec3(pos1, expected);
+    }
+}
+
+#[cfg(test)]
+pub fn cmp_float(left: f32, right: f32) {
+    if cmp_float_inside(left, right) {
+        panic!(
+            r#"assertion failed: `(left approx_eq right)`
+left: `{:?}`,
+right: `{:?}`"#,
+            left, right,
+        );
+    }
+}
+
+#[cfg(test)]
+pub fn cmp_vec3(left: Vec3, right: Vec3) {
+    if cmp_float_inside(left.x(), right.x())
+        || cmp_float_inside(left.y(), right.y())
+        || cmp_float_inside(left.z(), right.z())
+    {
+        panic!(
+            r#"assertion failed: `(left approx_eq right)`
+left: `{:?}`,
+right: `{:?}`"#,
+            left, right,
+        );
+    }
+}
+
+#[cfg(test)]
+fn cmp_float_inside(left: f32, right: f32) -> bool {
+    (left - right).abs() > f32::EPSILON
 }

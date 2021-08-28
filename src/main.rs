@@ -1,12 +1,11 @@
-mod vec3;
 use ray::Ray;
-use vec3::Vec3;
+use vec3::{Color, Point};
 
-use crate::vec3::Color;
 mod ray;
+mod vec3;
 
 fn main() {
-    let x = Vec3::new(0.1, 0.2, 0.3);
-    let _y: Color = x;
-    let _ray = Ray::new(x, x);
+    let ray = Ray::new(Point::new(0.0, 0.0, 0.0), Point::new(1.0, 0.5, 1.5));
+    let _destiny = ray.point_at(2.0);
+    let _color = Color::new(100.0, 200.0, 150.0);
 }
