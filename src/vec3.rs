@@ -6,7 +6,7 @@ pub type Point = Vec3;
 
 pub type Inside = f32;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone)]
 pub struct Vec3 {
     data: [Inside; 3],
 }
@@ -199,6 +199,7 @@ impl Not for Vec3 {
     }
 }
 
+#[cfg_attr(coverage, no_coverage)]
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -219,12 +220,28 @@ mod tests {
     }
 
     #[test]
+    fn test_index() {
+        let mut rgb = Color::new(100.0, 200.0, 255.0);
+        rgb[0] = 10.0;
+        cmp_float(rgb[0], 10.0);
+    }
+
+    #[test]
+    fn test_derives() {
+        let pos = Point::new(1.0, 2.0, 3.0);
+        assert_eq!(format!("{:?}", pos), "Vec3 { data: [1.0, 2.0, 3.0] }");
+    }
+
+    #[test]
     fn test_translate() {
         let pos1 = Point::new(1.0, 2.0, 3.0);
         let pos2 = Point::new(1.0, 1.0, 1.0);
         let expected = Point::new(2.0, 3.0, 4.0);
 
         cmp_vec3(pos1 + pos2, expected);
+
+        let expected = Point::new(0.0, 1.0, 2.0);
+        cmp_vec3(pos1 - pos2, expected);
     }
 
     #[test]
@@ -318,10 +335,16 @@ mod tests {
         pos1 *= 3.0;
         let expected = Point::new(9.0, 6.0, 12.0);
         cmp_vec3(pos1, expected);
+
+        let mut pos1 = Point::new(3.0, 2.0, 4.0);
+        pos1 /= 2.0;
+        let expected = Point::new(1.5, 1.0, 2.0);
+        cmp_vec3(pos1, expected);
     }
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage, no_coverage)]
 pub fn cmp_float(left: f32, right: f32) {
     if cmp_float_inside(left, right) {
         panic!(
@@ -334,6 +357,7 @@ right: `{:?}`"#,
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage, no_coverage)]
 pub fn cmp_vec3(left: Vec3, right: Vec3) {
     if cmp_float_inside(left.x(), right.x())
         || cmp_float_inside(left.y(), right.y())
