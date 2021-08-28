@@ -1,3 +1,5 @@
+#![cfg_attr(coverage, feature(no_coverage))]
+
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Not, Sub, SubAssign};
 use std::ops::{Index, IndexMut};
 
@@ -202,7 +204,6 @@ impl Not for Vec3 {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn test_color() {
         let rgb = Color::new(100.0, 200.0, 255.0);
@@ -228,6 +229,7 @@ mod tests {
         cmp_vec3(pos1 + pos2, expected);
     }
 
+    #[cfg_attr(coverage, no_coverage)]
     fn cmp_float(left: f32, right: f32) {
         if cmp_float_inside(left, right) {
             panic!(
@@ -239,6 +241,7 @@ right: `{:?}`"#,
         }
     }
 
+    #[cfg_attr(coverage, no_coverage)]
     fn cmp_vec3(left: Vec3, right: Vec3) {
         if cmp_float_inside(left.x(), right.x())
             || cmp_float_inside(left.y(), right.y())
