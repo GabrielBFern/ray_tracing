@@ -58,18 +58,17 @@ jobs:
     name: Run test coverage
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Toolchain setup
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           override: true
           components: llvm-tools-preview
-      - name: Install grcov
-        run: if [[ ! -e ~/.cargo/bin/grcov ]]; then cargo install grcov; fi
-      - name: Updating package repo
-        run: sudo apt-get update
-      - name: Installing dependencies
-        run: sudo apt-get install libasound2-dev
+      - uses: SierraSoftworks/setup-grcov@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
       - name: Run tests
         run: cargo test
         env:
